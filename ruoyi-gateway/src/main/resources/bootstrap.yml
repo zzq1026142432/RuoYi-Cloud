@@ -1,0 +1,58 @@
+nacos:
+  app-addr: localhost
+  server-addr: 172.16.60.218
+  server-port: 9090
+  namespace: f6f149fb-5c98-45ff-9977-a87a2ee11e6c
+  username: nacos
+  password: nacos
+
+
+
+# Spring
+spring:
+  application:
+    # 应用名称
+    name: ruoyi-gateway
+  profiles:
+    # 环境配置
+    active: dev
+  main:
+    allow-bean-definition-overriding: true
+  cloud:
+    nacos:
+      discovery:
+        # 服务注册地址
+        server-addr:  ${nacos.server-addr}:${nacos.server-port}
+        ip: ${nacos.app-addr}
+        namespace: ${nacos.namespace}
+        username: ${nacos.username}
+        password: ${nacos.password}
+      config:
+        # 配置中心地址
+        server-addr:  ${nacos.server-addr}:${nacos.server-port}
+        namespace: ${nacos.namespace}
+        username: ${nacos.username}
+        password: ${nacos.password}
+        # 配置文件格式
+        file-extension: yml
+        # 共享配置
+        shared-configs:
+          - application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
+    sentinel:
+      # 取消控制台懒加载
+      eager: true
+      transport:
+        # 控制台地址
+        dashboard:  ${nacos.server-addr}:8718
+      # nacos配置持久化
+      datasource:
+        ds1:
+          nacos:
+            server-addr: ${nacos.server-addr}:${nacos.server-port}
+            namespace: ${nacos.namespace}
+            username: ${nacos.username}
+            password: ${nacos.password}
+            dataId: sentinel-api-gateway
+            groupId: DEFAULT_GROUP
+            data-type: json
+            rule-type: flow
